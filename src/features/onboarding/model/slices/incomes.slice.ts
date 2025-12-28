@@ -1,4 +1,5 @@
 import { StateCreator } from "zustand";
+import { BaseSlice } from "./base.slice";
 
 export interface IncomesSlice {
   errors: {
@@ -20,12 +21,12 @@ export const createIncomesSlice: StateCreator<
   },
 
   setIncomes: (amount) =>
-    set((s) => ({ data: { ...s.data, incomes: amount } })),
+    set((s: IncomesSlice & BaseSlice) => ({ data: { ...s.data, incomes: amount } })),
 
   setIncomesError: (message) =>
-    set((s) => ({ errors: { ...s.errors, incomes: message } })),
+    set((s: IncomesSlice & BaseSlice) => ({ errors: { ...s.errors, incomes: message } })),
 
   clearIncomesError: () =>
-    set((s) => ({ errors: { ...s.errors, incomes: "" } })),
+    set((s: IncomesSlice & BaseSlice) => ({ errors: { ...s.errors, incomes: "" } })),
 });
 

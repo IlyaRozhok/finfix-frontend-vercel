@@ -49,7 +49,9 @@ api.interceptors.request.use(async (cfg) => {
       await primeCsrf();
       token = getCookie(CSRF_COOKIE);
     }
-    cfg.headers = { ...(cfg.headers ?? {}), [CSRF_HEADER]: token ?? "" };
+    if (cfg.headers) {
+      cfg.headers[CSRF_HEADER] = token ?? "";
+    }
   }
   return cfg;
 });
@@ -64,7 +66,9 @@ api.interceptors.response.use(
       cfg.__csrfRetried = true;
       await primeCsrf();
       const token = getCookie(CSRF_COOKIE);
-      cfg.headers = { ...(cfg.headers ?? {}), [CSRF_HEADER]: token ?? "" };
+      if (cfg.headers) {
+        cfg.headers[CSRF_HEADER] = token ?? "";
+      }
       return api.request(cfg);
     }
 

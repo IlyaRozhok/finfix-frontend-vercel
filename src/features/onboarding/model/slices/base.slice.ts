@@ -61,7 +61,7 @@ export const createBaseSlice: StateCreator<
   },
 
   setCurrencyLocally: (currency) =>
-    set((s) => ({ data: { ...s.data, baseCurrency: currency } })),
+    set((s: BaseSlice) => ({ data: { ...s.data, baseCurrency: currency } })),
 
   initializeFromSummary: (summary) => {
     const newData: Partial<OnboardingData> = {};
@@ -130,7 +130,7 @@ export const createBaseSlice: StateCreator<
     }
 
     // Update store with new data
-    set((s) => ({
+    set((s: BaseSlice) => ({
       data: { ...s.data, ...newData },
       originalData: { ...s.originalData, ...newOriginalData },
     }));

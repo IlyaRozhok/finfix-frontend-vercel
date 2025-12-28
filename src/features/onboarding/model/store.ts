@@ -16,19 +16,33 @@ type OnboardingState = BaseSlice &
     removeDebt: (id: string) => Promise<void>;
   };
 
-export const useOnboarding = create<OnboardingState>((set, get, api) => ({
-  ...createBaseSlice(set, get, api),
-  ...createIncomesSlice(set, get, api),
-  ...createExpensesSlice(set, get, api),
-  ...createDebtsSlice(set, get, api),
-  ...createInstallmentsSlice(set, get, api),
+export const useOnboarding = create<OnboardingState>((set, get, api) => {
+  const baseSlice = createBaseSlice(set, get, api);
+  const incomesSlice = createIncomesSlice(set, get, api);
+  const expensesSlice = createExpensesSlice(set, get, api);
+  const debtsSlice = createDebtsSlice(set, get, api);
+  const installmentsSlice = createInstallmentsSlice(set, get, api);
 
-  // Additional methods
-  setCurrency: async (userId, currency) => {
-    await updateCurrency(userId, currency, get());
-  },
+  return {
+    ...baseSlice,
+    ...incomesSlice,
+    ...expensesSlice,
+    ...debtsSlice,
+    ...installmentsSlice,
+    // Merge errors objects properly
+    errors: {
+      ...incomesSlice.errors,
+      ...expensesSlice.errors,
+      ...debtsSlice.errors,
+      ...installmentsSlice.errors,
+    },
+    // Additional methods
+    setCurrency: async (userId, currency) => {
+      await updateCurrency(userId, currency, get());
+    },
 
-  removeDebt: async (id) => {
-    await deleteDebtAndUpdateStore(id, get());
-  },
-}));
+    removeDebt: async (id) => {
+      await deleteDebtAndUpdateStore(id, get());
+    },
+  };
+});

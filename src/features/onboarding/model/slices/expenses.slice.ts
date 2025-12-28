@@ -3,6 +3,7 @@ import { ReqUserExpense } from "../types";
 import { mkExpenseRow } from "../../lib/factories";
 import { validateExpenses } from "../../lib/validators";
 import { hasExpensesChanged } from "../../lib/diff";
+import { BaseSlice } from "./base.slice";
 
 export interface ExpensesSlice {
   errors: {
@@ -33,7 +34,7 @@ export const createExpensesSlice: StateCreator<
   },
 
   addExpense: (categoryId) =>
-    set((s) => ({
+    set((s: ExpensesSlice & BaseSlice) => ({
       data: {
         ...s.data,
         expenses: [...s.data.expenses, mkExpenseRow(categoryId)],
@@ -41,16 +42,16 @@ export const createExpensesSlice: StateCreator<
     })),
 
   setExpenses: (expenses) =>
-    set((s) => ({
+    set((s: ExpensesSlice & BaseSlice) => ({
       data: { ...s.data, expenses },
       originalData: { ...s.originalData, expenses },
     })),
 
   removeExpense: (id) =>
-    set((s) => ({
+    set((s: ExpensesSlice & BaseSlice) => ({
       data: {
         ...s.data,
-        expenses: s.data.expenses.filter((e) => e.id !== id),
+        expenses: s.data.expenses.filter((e: ReqUserExpense) => e.id !== id),
       },
       errors: {
         ...s.errors,
@@ -61,10 +62,10 @@ export const createExpensesSlice: StateCreator<
     })),
 
   updateExpense: (id, key, value, userId) =>
-    set((s) => ({
+    set((s: ExpensesSlice & BaseSlice) => ({
       data: {
         ...s.data,
-        expenses: s.data.expenses.map((e) =>
+        expenses: s.data.expenses.map((e: ReqUserExpense) =>
           e.id === id ? { ...e, [key]: value, userId } : e
         ),
       },
@@ -73,12 +74,12 @@ export const createExpensesSlice: StateCreator<
   validateExpenses: () => {
     const { expenses } = get().data;
     const errs = validateExpenses(expenses);
-    set((s) => ({ errors: { ...s.errors, expenses: errs } }));
+    set((s: ExpensesSlice & BaseSlice) => ({ errors: { ...s.errors, expenses: errs } }));
     return Object.keys(errs).length === 0;
   },
 
   clearExpenseError: (id) =>
-    set((s) => ({
+    set((s: ExpensesSlice & BaseSlice) => ({
       errors: {
         ...s.errors,
         expenses: {

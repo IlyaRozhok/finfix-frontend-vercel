@@ -7,7 +7,7 @@ import { useState } from "react";
 export const OnboardingUserMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { user } = useAuth();
-  console.log(user?.avatarUr);
+  console.log(user?.avatarUrl);
   return (
     <>
       <div className="flex items-center justify-center gap-2">

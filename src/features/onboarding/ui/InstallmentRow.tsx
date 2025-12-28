@@ -17,12 +17,16 @@ export const InstallmentRow = ({
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  if (!row.id) {
+    return null;
+  }
+
   return (
     <div className="grid min-h-[44px] grid-cols-1 gap-2 md:grid-cols-[12rem_10rem_10rem_10rem_8rem_3rem] md:items-center items-stretch">
       <Input
         placeholder="Description"
         value={row.description}
-        onChange={(e) => onUpdate(row.id, "description", e.target.value)}
+        onChange={(e) => row.id && onUpdate(row.id, "description", e.target.value)}
         containerClassName="h-11"
         className="h-full"
       />
@@ -30,7 +34,7 @@ export const InstallmentRow = ({
       <Input
         type="date"
         value={row.startDate}
-        onChange={(e) => onUpdate(row.id, "startDate", e.target.value)}
+        onChange={(e) => row.id && onUpdate(row.id, "startDate", e.target.value)}
         containerClassName="h-11"
         className="h-full"
       />
@@ -41,7 +45,7 @@ export const InstallmentRow = ({
         value={row.totalAmount}
         onChange={(e) => {
           const v = e.target.value;
-          if (v === "" || numRe.test(v)) onUpdate(row.id, "totalAmount", v);
+          if (v === "" || numRe.test(v)) row.id && onUpdate(row.id, "totalAmount", v);
         }}
         containerClassName="h-11"
         className="h-full"
@@ -51,7 +55,7 @@ export const InstallmentRow = ({
         placeholder="Total payments"
         type="number"
         value={row.totalPayments}
-        onChange={(e) => onUpdate(row.id, "totalPayments", e.target.value)}
+        onChange={(e) => row.id && onUpdate(row.id, "totalPayments", e.target.value)}
         containerClassName="h-11"
         className="h-full"
       />
@@ -94,7 +98,7 @@ export const InstallmentRow = ({
               </button>
               <button
                 onClick={() => {
-                  onRemove(row.id);
+                  row.id && onRemove(row.id);
                   setShowDeleteModal(false);
                 }}
                 className="flex-1 px-4 py-2 rounded-lg bg-black hover:bg-gray-700/70 text-red-500 transition-colors"

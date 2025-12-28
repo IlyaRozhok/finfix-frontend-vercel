@@ -3,6 +3,7 @@ import { Debt } from "@/entities/debts/model";
 import { mkDebt } from "../../lib/factories";
 import { validateDebts, isEmptyDebt, isValidDebt } from "../../lib/validators";
 import { hasDebtsChanged } from "../../lib/diff";
+import { BaseSlice } from "./base.slice";
 
 export interface DebtsSlice {
   errors: {
@@ -29,17 +30,17 @@ export const createDebtsSlice: StateCreator<
   },
 
   addDebt: () =>
-    set((s) => ({ data: { ...s.data, debts: [...s.data.debts, mkDebt()] } })),
+    set((s: DebtsSlice & BaseSlice) => ({ data: { ...s.data, debts: [...s.data.debts, mkDebt()] } })),
 
   setDebts: (debts) =>
-    set((s) => ({
+    set((s: DebtsSlice & BaseSlice) => ({
       data: { ...s.data, debts },
       originalData: { ...s.originalData, debts },
     })),
 
   removeDebtLocally: (id) => {
-    set((s) => ({
-      data: { ...s.data, debts: s.data.debts.filter((d) => d.id !== id) },
+    set((s: DebtsSlice & BaseSlice) => ({
+      data: { ...s.data, debts: s.data.debts.filter((d: Debt) => d.id !== id) },
       errors: {
         ...s.errors,
         debts: Object.fromEntries(
@@ -50,12 +51,12 @@ export const createDebtsSlice: StateCreator<
   },
 
   updateDebt: (id, k, v) => {
-    set((s) => {
-      const debts = s.data.debts.map((d) =>
+    set((s: DebtsSlice & BaseSlice) => {
+      const debts = s.data.debts.map((d: Debt) =>
         d.id === id ? { ...d, [k]: v } : d
       );
 
-      const row = debts.find((d) => d.id === id)!;
+      const row = debts.find((d: Debt) => d.id === id)!;
       const debtsErrors = { ...(s.errors.debts ?? {}) };
 
       if (isEmptyDebt(row) || isValidDebt(row)) {
@@ -72,18 +73,18 @@ export const createDebtsSlice: StateCreator<
   validateDebts: () => {
     const { debts } = get().data;
     const errs = validateDebts(debts);
-    set((s) => ({ errors: { ...s.errors, debts: errs } }));
+    set((s: DebtsSlice & BaseSlice) => ({ errors: { ...s.errors, debts: errs } }));
     return Object.keys(errs).length === 0;
   },
 
   clearDebtError: (id) =>
-    set((s) => ({
+    set((s: DebtsSlice & BaseSlice) => ({
       errors: { ...s.errors, debts: { ...(s.errors.debts ?? {}), [id]: "" } },
     })),
 
   validateDebtRow: (id) =>
-    set((s) => {
-      const row = s.data.debts.find((d) => d.id === id);
+    set((s: DebtsSlice & BaseSlice) => {
+      const row = s.data.debts.find((d: Debt) => d.id === id);
       if (!row) return s;
 
       const debtsErrors = { ...(s.errors.debts ?? {}) };

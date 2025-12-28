@@ -22,9 +22,19 @@ export const OnboardingDebts = () => {
           // Transform backend data to frontend format
           const transformedDebts: Debt[] = debts.map((debt) => ({
             id: debt.id || crypto.randomUUID(),
+            userId: debt.userId || "",
             description: debt.description || "",
+            debtType: "",
             totalDebt: debt.totalDebt,
+            monthlyPayment: "",
             interest: debt.interest,
+            gracePeriodDays: null,
+            startDate: "",
+            statementDay: null,
+            dueDay: null,
+            isClosed: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
           }));
           setDebts(transformedDebts);
         } catch (error) {

@@ -16,8 +16,8 @@ export const Incomes = () => {
   };
 
   useEffect(() => {
-    if (incomes) {
-      setIncomes(incomes);
+    if (incomes !== undefined) {
+      setIncomes(String(incomes));
     }
   }, [incomes]);
 

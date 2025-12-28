@@ -3,6 +3,7 @@ import { Installment } from "../types";
 import { mkInstallment } from "../../lib/factories";
 import { validateInstallments } from "../../lib/validators";
 import { hasInstallmentsChanged } from "../../lib/diff";
+import { BaseSlice } from "./base.slice";
 
 export interface InstallmentsSlice {
   errors: {
@@ -32,7 +33,7 @@ export const createInstallmentsSlice: StateCreator<
   },
 
   addInstallment: () =>
-    set((s) => ({
+    set((s: InstallmentsSlice & BaseSlice) => ({
       data: {
         ...s.data,
         installments: [...(s.data.installments || []), mkInstallment()],
@@ -40,17 +41,17 @@ export const createInstallmentsSlice: StateCreator<
     })),
 
   setInstallments: (installments) =>
-    set((s) => ({
+    set((s: InstallmentsSlice & BaseSlice) => ({
       data: { ...s.data, installments },
       originalData: { ...s.originalData, installments },
     })),
 
   removeInstallment: (id) =>
-    set((s) => ({
+    set((s: InstallmentsSlice & BaseSlice) => ({
       data: {
         ...s.data,
         installments: (s.data.installments || []).filter(
-          (inst) => inst.id !== id
+          (inst: Installment) => inst.id !== id
         ),
       },
       errors: {
@@ -62,10 +63,10 @@ export const createInstallmentsSlice: StateCreator<
     })),
 
   updateInstallment: (id, k, v) =>
-    set((s) => ({
+    set((s: InstallmentsSlice & BaseSlice) => ({
       data: {
         ...s.data,
-        installments: (s.data.installments || []).map((inst) =>
+        installments: (s.data.installments || []).map((inst: Installment) =>
           inst.id === id ? { ...inst, [k]: v } : inst
         ),
       },
@@ -74,12 +75,12 @@ export const createInstallmentsSlice: StateCreator<
   validateInstallments: () => {
     const { installments } = get().data;
     const errs = validateInstallments(installments || []);
-    set((s) => ({ errors: { ...s.errors, installments: errs } }));
+    set((s: InstallmentsSlice & BaseSlice) => ({ errors: { ...s.errors, installments: errs } }));
     return Object.keys(errs).length === 0;
   },
 
   clearInstallmentError: (id) =>
-    set((s) => ({
+    set((s: InstallmentsSlice & BaseSlice) => ({
       errors: {
         ...s.errors,
         installments: { ...(s.errors.installments ?? {}), [id]: "" },
