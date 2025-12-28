@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@layer theme, base, mui, components, utilities;
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply h-full bg-gray-50 text-gray-900 antialiased;
+  }
+
+  #root {
+    @apply h-full;
+  }
+
+  /* Chrome, Safari, Edge */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@theme {
+  /* Legacy colors */
+  --color-deep-blue: #021024;
+  --color-primary-blue: #003459;
+  --color-light-blue: #adebff;
+
+  /* New color palette */
+  --color-background: #1f2937;
+  --color-secondary: #f9fafb;
+  --color-disable: #4b5563;
+}
+
+/* Тонкий, «воздушный» скролл для выпадашек */
+.nice-scroll {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(148, 163, 184, 0.6) /* thumb */ transparent; /* track */
+  /* Чуть отступов, чтобы ползунок не прилипал к краям */
+  padding-right: 0.125rem;
+  overscroll-behavior: contain;
+  /* Чтобы края списка красиво «таяли» (поддерживается большинством браузеров) */
+  -webkit-mask-image: linear-gradient(
+    transparent,
+    #000 8px,
+    #000 calc(100% - 8px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    transparent,
+    #000 8px,
+    #000 calc(100% - 8px),
+    transparent
+  );
+}
+
+/* WebKit */
+.nice-scroll::-webkit-scrollbar {
+  width: 10px; /* общая ширина скролла */
+}
+
+.nice-scroll::-webkit-scrollbar-track {
+  background: transparent; /* трек прозрачный */
+  margin-block: 6px; /* «скруглённые» края трека */
+  border-radius: 9999px;
+}
+
+.nice-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(148, 163, 184, 0.6); /* slate-400/60 */
+  border: 3px solid transparent; /* «воздух» вокруг ползунка */
+  background-clip: content-box; /* чтобы border давал зазор */
+  transition: background 0.15s ease;
+}
+
+.nice-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(203, 213, 225, 0.9); /* slate-300/90 */
+  background-clip: content-box;
+}
+
+.nice-scroll::-webkit-scrollbar-thumb:active {
+  background: rgba(226, 232, 240, 1); /* slate-200 */
+  background-clip: content-box;
+}
+
+/* Опционально: фикс стабильной ширины скролла (если используешь utility-класс) */
+.scrollbar-gutter-stable {
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Glassmorphism animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 3D Card Flip Animation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
