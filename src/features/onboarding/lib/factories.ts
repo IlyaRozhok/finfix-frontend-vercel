@@ -3,9 +3,19 @@ import { Installment, ReqUserExpense } from "../model/types";
 
 export const mkDebt = (): Debt => ({
   id: crypto.randomUUID(),
+  userId: "",
   description: "",
+  debtType: "",
   totalDebt: "",
+  monthlyPayment: "",
   interest: "",
+  gracePeriodDays: null,
+  startDate: "",
+  statementDay: null,
+  dueDay: null,
+  isClosed: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 });
 
 export const mkExpenseRow = (categoryId?: string): ReqUserExpense => ({

@@ -7,7 +7,7 @@ export function GoogleLoginButton() {
     window.location.origin
   )}`;
   return (
-    <Button variant="black-blur" onClick={() => (window.location.href = url)}>
+    <Button variant="glass" onClick={() => (window.location.href = url)}>
       <div className="flex items-center gap-2">
         <img className="w-5" src={googleIcon} alt="google-icon" />
         Continue with Google

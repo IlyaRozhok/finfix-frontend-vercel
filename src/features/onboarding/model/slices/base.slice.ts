@@ -1,5 +1,6 @@
 import { StateCreator } from "zustand";
 import { OnboardingData } from "../types";
+import { Debt } from "@/entities/debts/model";
 
 export interface BaseSlice {
   data: OnboardingData;
@@ -94,11 +95,21 @@ export const createBaseSlice: StateCreator<
 
     // Set debts
     if (summary.debts && summary.debts.length > 0) {
-      const transformedDebts = summary.debts.map((debt) => ({
+      const transformedDebts: Debt[] = summary.debts.map((debt) => ({
         id: debt.id,
+        userId: "",
         description: debt.description || "",
+        debtType: "",
         totalDebt: debt.totalDebt,
+        monthlyPayment: "",
         interest: debt.interest,
+        gracePeriodDays: null,
+        startDate: "",
+        statementDay: null,
+        dueDay: null,
+        isClosed: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }));
       newData.debts = transformedDebts;
       newOriginalData.debts = transformedDebts;

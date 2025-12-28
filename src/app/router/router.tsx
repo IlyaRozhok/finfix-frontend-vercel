@@ -24,7 +24,7 @@ import {
   OnboardingDebts,
   OnboardingInstallments,
 } from "@/pages/onboarding";
-import Monobank from "@pages/dashboard/monobank";
+import Monobank from "@/pages/dashboard/Monobank";
 
 function RootRedirect() {
   const { user, loading } = useAuth();
