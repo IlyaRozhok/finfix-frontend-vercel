@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox } from "@headlessui/react";
 import {
   useFloating,
   offset,
@@ -41,7 +41,9 @@ export const ListboxFloating = <T extends string>({
     whileElementsMounted: autoUpdate,
     middleware: [
       offset(8),
-      flip(),
+      flip({
+        fallbackPlacements: ["bottom-start", "bottom-end", "top-start", "top-end"],
+      }),
       size({
         apply({ rects, elements }) {
           if (matchWidth) {
@@ -66,21 +68,22 @@ export const ListboxFloating = <T extends string>({
           </Listbox.Button>
 
           <FloatingPortal>
-            <Transition
-              as={Fragment}
-              show={open}
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 -translate-y-1"
-            >
+            {open && (
               <Listbox.Options
                 ref={refs.setFloating}
-                style={floatingStyles}
+                static
+                style={{
+                  ...floatingStyles,
+                  outline: 'none',
+                  borderColor: variant === "glass" ? 'rgba(255, 255, 255, 0.3)' : undefined,
+                }}
                 className={clsx(
-                  "z-[1000] overflow-auto rounded-xl nice-scroll p-1",
+                  "z-[1000] overflow-auto nice-scroll pt-2 pb-2 px-1.5",
+                  "focus:outline-none focus:ring-0 focus-visible:outline-none",
+                  "[&:focus]:outline-none [&:focus]:ring-0 [&:focus-visible]:outline-none",
                   variant === "glass"
-                    ? "bg-white/20 backdrop-blur-xl border border-white/30 ring-1 ring-white/15 shadow-2xl text-black"
-                    : "bg-black/90 backdrop-blur-md ring-1 ring-slate-400/25 shadow-2xl text-slate-200",
+                    ? "bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl text-primary-background [&:focus]:border-white/30 [&:focus-visible]:border-white/30"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-primary-background",
                   optionsClassName
                 )}
               >
@@ -88,25 +91,30 @@ export const ListboxFloating = <T extends string>({
                   <Listbox.Option
                     key={opt.value}
                     value={opt.value}
-                    className={({ active, selected }) =>
+                    className={({ active }) =>
                       clsx(
-                        "cursor-pointer select-none rounded-lg px-3 py-2 text-sm",
-                        variant === "glass" ? "text-black" : "text-slate-200",
-                        active &&
-                          (variant === "glass" ? "bg-white/30" : "bg-white/10"),
-                        selected &&
-                          (variant === "glass"
-                            ? "bg-white/40"
-                            : "bg-sky-400/20"),
+                        "relative cursor-pointer select-none py-2 px-3 rounded-lg transition-colors",
+                        active
+                          ? "bg-white/20 text-white"
+                          : "text-white",
                         optionClassName
                       )
                     }
                   >
-                    {opt.label}
+                    {({ selected }) => (
+                      <span
+                        className={clsx(
+                          "block truncate",
+                          selected ? "font-semibold" : "font-normal"
+                        )}
+                      >
+                        {opt.label}
+                      </span>
+                    )}
                   </Listbox.Option>
                 ))}
               </Listbox.Options>
-            </Transition>
+            )}
           </FloatingPortal>
         </>
       )}

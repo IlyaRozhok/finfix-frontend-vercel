@@ -6,8 +6,7 @@ import { InstallmentRow } from "@/features/onboarding/ui/InstallmentRow";
 import { useOnboarding } from "@/features/onboarding/model/store";
 
 export const OnboardingInstallments = () => {
-  const { data, addInstallment, updateInstallment, removeInstallment } =
-    useOnboarding();
+  const { data, addInstallment, updateInstallment } = useOnboarding();
 
   const handleUpdate = (id: string, key: string, value: string) => {
     updateInstallment(id, key as keyof Installment, value);
@@ -17,14 +16,21 @@ export const OnboardingInstallments = () => {
     addInstallment();
   };
 
-  const handleRemove = (id: string) => {
-    removeInstallment(id);
-  };
-
   const widgetData = {
     title: "Installments",
     body: `Add your installment purchases (if any). You can skip this step.`,
     step: OnboardingStep.INSTALLMENTS,
+    headerAction: (
+      <Button
+        variant="glass"
+        size="md"
+        onClick={handleAdd}
+        className="border-white/30 bg-white/15 hover:bg-white/25 hover:border-white/40 font-semibold w-11 h-11 p-0 flex items-center justify-center rounded-xl"
+        title="Add installment"
+      >
+        <span className="text-xl font-light">+</span>
+      </Button>
+    ),
   };
 
   const installments = useMemo(
@@ -39,33 +45,33 @@ export const OnboardingInstallments = () => {
   }, [installments]);
 
   return (
-    <div className="flex justify-center item-center">
+    <div className="flex justify-center items-center min-h-screen">
       <OnboardingFrame {...widgetData}>
-        <div className="mt-4 space-y-3">
-          <div className="custom-scroll max-h-[50vh] md:max-h-72 overflow-y-auto pr-2 pb-4 space-y-3">
-            {installments.map((inst) => (
-              <InstallmentRow
-                key={inst.id}
-                row={inst}
-                onUpdate={handleUpdate}
-                onRemove={handleRemove}
-              />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-1">
-            <Button
-              variant="ghost"
-              onClick={handleAdd}
-              className="w-full sm:w-auto"
-            >
-              Add installment
-            </Button>
-            <div className="text-sm text-slate-300 text-right">
-              Total estimation:
-              <span className="ml-2 font-semibold">{total.toFixed(2)} UAH</span>
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 overflow-y-auto overflow-x-auto nice-scroll space-y-3 pr-2 pb-2">
+            <div className="min-w-fit">
+              {installments.map((inst) => (
+                <InstallmentRow
+                  key={inst.id}
+                  row={inst}
+                  onUpdate={handleUpdate}
+                />
+              ))}
+              {installments.length === 0 && (
+                <div className="text-center py-8 text-primary-background/80 text-sm sm:text-base px-2 font-extralight">
+                  No installments added. You can skip this step if you don't have any installment purchases.
+                </div>
+              )}
             </div>
           </div>
+          {installments.length > 0 && (
+            <div className="text-sm text-primary-background/90 text-center sm:text-right font-medium mt-4 pt-4 border-t border-white/10">
+              Total estimation:
+              <span className="ml-2 font-bold text-primary-background">
+                {total.toFixed(2)} {data.baseCurrency || "UAH"}
+              </span>
+            </div>
+          )}
         </div>
       </OnboardingFrame>
     </div>

@@ -6,28 +6,37 @@ import {
   RequireOnboarded,
 } from "@/app/guards/guard";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { useMode } from "@/app/providers/ModeProvider";
+import { AppMode } from "@/app/modes/types";
 
 import OnboardingLayout from "../layouts/OnboardingLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { OnboardingWrapper } from "../layouts/OnboardingWrapper";
 import { LoginPage } from "@/pages/login/LoginPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
-import { DebtsPage } from "@/pages/dashboard/DebtsPage";
-import { ExpensesPage } from "@/pages/dashboard/ExpensesPage";
-import { InstallmentsPage } from "@/pages/dashboard/InstallmentsPage";
-import { IncomesPage } from "@/pages/dashboard/IncomesPage";
-import { TransactionsPage } from "@/pages/dashboard/TransactionsPage";
 import {
   OnboardingCurrency,
   OnboardingIncomes,
   OnboardingExpenses,
   OnboardingDebts,
   OnboardingInstallments,
+  OnboardingComplete,
 } from "@/pages/onboarding";
+import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { DebtsPage } from "@/pages/dashboard/DebtsPage";
+import { ExpensesPage } from "@/pages/dashboard/ExpensesPage";
+import { InstallmentsPage } from "@/pages/dashboard/InstallmentsPage";
+import { IncomesPage } from "@/pages/dashboard/IncomesPage";
+import { TransactionsPage } from "@/pages/dashboard/TransactionsPage";
+import { AccountsPage } from "@/pages/dashboard/AccountsPage";
 import Monobank from "@/pages/dashboard/Monobank";
+import PWALayout from "@/app/modes/pwa/layout/PWALayout";
+import { PWADashboardPage } from "@/app/modes/pwa/pages/DashboardPage";
+import { PWAAccountsPage } from "@/app/modes/pwa/pages/AccountsPage";
+import { PWAAccountStatsPage } from "@/app/modes/pwa/pages/AccountStatsPage";
 
 function RootRedirect() {
   const { user, loading } = useAuth();
+  const { mode } = useMode();
 
   if (loading) {
     return (
@@ -41,9 +50,12 @@ function RootRedirect() {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <Navigate to={user.isOnboarded ? "/dashboard" : "/onboarding"} replace />
-  );
+  if (!user.isOnboarded) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  const defaultPath = mode === AppMode.PWA ? "/analytics" : "/profile";
+  return <Navigate to={defaultPath} replace />;
 }
 
 export function AppRouter() {
@@ -74,10 +86,11 @@ export function AppRouter() {
         <Route path="expenses" element={<OnboardingExpenses />} />
         <Route path="debts" element={<OnboardingDebts />} />
         <Route path="installments" element={<OnboardingInstallments />} />
+        <Route path="complete" element={<OnboardingComplete />} />
       </Route>
 
       <Route
-        path="/dashboard"
+        path="/profile"
         element={
           <RequireAuth>
             <RequireOnboarded>
@@ -92,8 +105,22 @@ export function AppRouter() {
         <Route path="debts" element={<DebtsPage />} />
         <Route path="installments" element={<InstallmentsPage />} />
         <Route path="expenses" element={<ExpensesPage />} />
-        <Route path="monobank" element={<Monobank/>}
-        />
+        <Route path="accounts" element={<AccountsPage />} />
+        <Route path="monobank" element={<Monobank />} />
+      </Route>
+
+      <Route
+        path="/analytics"
+        element={
+          <RequireAuth>
+            <RequireOnboarded>
+              <PWALayout />
+            </RequireOnboarded>
+          </RequireAuth>
+        }
+      >
+        <Route index element={<PWADashboardPage />} />
+        <Route path="accounts/:accountId" element={<PWAAccountStatsPage />} />
       </Route>
 
       <Route path="/" element={<RootRedirect />} />

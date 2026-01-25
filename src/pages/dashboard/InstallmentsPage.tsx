@@ -6,7 +6,7 @@ import {
 import { Installment } from "@/features/installments/model/types";
 import { InstallmentForm } from "@/features/installments/ui/InstallmentForm";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { Button, useToast } from "@/shared/ui";
+import { Button, useToast, StatusBadge } from "@/shared/ui";
 import { ConfirmationModal } from "@/shared/ui/ConfirmationModal";
 import {
   CurrencyDollarIcon,
@@ -160,8 +160,7 @@ export function InstallmentsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Installments</h1>
-        <p className="mt-1">Track your installment plans</p>
+        <h1 className="text-3xl font-light">Track your installment plans</h1>
       </div>
 
       {/* Summary Cards */}
@@ -259,9 +258,7 @@ export function InstallmentsPage() {
                 </tr>
               </thead>
               <tbody className="bg-transparent divide-y divide-white/10">
-                {installments.map((installment) => {
-                  console.log("Installment data:", installment);
-                  return (
+                {installments.map((installment) => (
                     <tr
                       key={installment.id}
                       className="hover:bg-white/5 transition-colors"
@@ -307,15 +304,15 @@ export function InstallmentsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        <StatusBadge
+                          variant={
                             installment.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
+                              ? "success"
+                              : "neutral"
+                          }
                         >
                           {installment.status}
-                        </span>
+                        </StatusBadge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-2">
@@ -336,8 +333,7 @@ export function InstallmentsPage() {
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>

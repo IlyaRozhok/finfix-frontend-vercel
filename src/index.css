@@ -61,14 +61,27 @@
   );
 }
 
+/* Override Headless UI default focus styles */
+[data-headlessui-state] {
+  outline: none !important;
+}
+
+[data-headlessui-state]:focus,
+[data-headlessui-state]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* WebKit */
 .nice-scroll::-webkit-scrollbar {
   width: 10px; /* общая ширина скролла */
+  height: 10px; /* высота для горизонтального скролла */
 }
 
 .nice-scroll::-webkit-scrollbar-track {
   background: transparent; /* трек прозрачный */
   margin-block: 6px; /* «скруглённые» края трека */
+  margin-inline: 6px; /* отступы для горизонтального скролла */
   border-radius: 9999px;
 }
 
@@ -88,6 +101,12 @@
 .nice-scroll::-webkit-scrollbar-thumb:active {
   background: rgba(226, 232, 240, 1); /* slate-200 */
   background-clip: content-box;
+}
+
+/* Более заметный горизонтальный скролл */
+.nice-scroll {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(148, 163, 184, 0.8) rgba(255, 255, 255, 0.1); /* более заметный цвет */
 }
 
 /* Опционально: фикс стабильной ширины скролла (если используешь utility-класс) */

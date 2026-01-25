@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchDebts, deleteDebt, Debt } from "@/features/debts/api";
 import { DebtForm } from "@/features/debts/ui/DebtForm";
-import { Button, useToast } from "@/shared/ui";
+import { Button, useToast, StatusBadge } from "@/shared/ui";
 import { ConfirmationModal } from "@/shared/ui/ConfirmationModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "@/app/providers/AuthProvider";
@@ -107,8 +107,7 @@ export function DebtsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Debts</h1>
-          <p className="mt-1">Manage your debt obligations</p>
+          <h1 className="text-3xl font-light">Manage your debt obligations</h1>
         </div>
         <Button variant="glass-primary" onClick={openAddForm}>
           Add Debt
@@ -182,15 +181,11 @@ export function DebtsPage() {
                       {parseFloat(debt.interest || "0").toFixed(2)}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          debt.isClosed
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
+                      <StatusBadge
+                        variant={debt.isClosed ? "success" : "warning"}
                       >
                         {debt.isClosed ? "Closed" : "Active"}
-                      </span>
+                      </StatusBadge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex gap-2 justify-end">

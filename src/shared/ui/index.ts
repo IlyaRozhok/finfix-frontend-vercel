@@ -8,3 +8,6 @@ export { Toast } from "./Toast";
 export { ToastContainer } from "./ToastContainer";
 export { ToastProvider, useToast } from "./ToastContext";
 export { Skeleton, DashboardSkeleton, TableSkeleton, ListSkeleton } from "./Skeleton";
+export { UserDropdownMenu } from "./UserDropdownMenu";
+export { Header } from "./Header";
+export { StatusBadge, StatusDot } from "./StatusBadge";

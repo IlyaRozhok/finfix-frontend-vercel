@@ -20,6 +20,7 @@ export type TransactionFormData = {
   categoryId?: string;
   installmentId?: string;
   debtId?: string;
+  accountId?: string;
   note?: string;
 };
 

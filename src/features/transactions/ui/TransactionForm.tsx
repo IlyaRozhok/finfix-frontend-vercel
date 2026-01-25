@@ -12,6 +12,7 @@ import {
   type Installment,
   type Debt,
 } from "../api";
+import { fetchAccounts, type Account } from "@/features/accounts/api";
 import { TransactionType, TransactionDirection, TransactionFormData } from "../model/types";
 
 type TransactionFormProps = {
@@ -30,16 +31,54 @@ export function TransactionForm({
   const [categories, setCategories] = useState<Category[]>([]);
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [debts, setDebts] = useState<Debt[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
+
+  // Helper function to format date to DD.MM.YYYY
+  const formatDateToDDMMYYYY = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
+  // Helper function to convert DD.MM.YYYY to ISO string
+  const parseDDMMYYYYToISO = (dateString: string): string => {
+    const parts = dateString.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid date format');
+    }
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const year = parseInt(parts[2], 10);
+    const date = new Date(year, month, day);
+    return date.toISOString();
+  };
+
+  // Helper function to format input with mask
+  const formatDateInput = (value: string): string => {
+    // Remove all non-digit characters
+    const digits = value.replace(/\D/g, '');
+    
+    // Apply mask DD.MM.YYYY
+    if (digits.length <= 2) {
+      return digits;
+    } else if (digits.length <= 4) {
+      return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+    } else {
+      return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4, 8)}`;
+    }
+  };
 
   const [formData, setFormData] = useState<TransactionFormData>({
     type: TransactionType.CATEGORY_BASED,
     direction: TransactionDirection.EXPENSE,
     amount: "",
-    occurredAt: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+    occurredAt: formatDateToDDMMYYYY(new Date()), // DD.MM.YYYY format
     categoryId: "",
     installmentId: "",
     debtId: "",
+    accountId: "",
     note: "",
   });
 
@@ -72,20 +111,27 @@ export function TransactionForm({
     [debts]
   );
 
+  const accountOptions = useMemo(() =>
+    accounts.map(account => ({ value: account.id, label: `${account.name} (${account.assetCode})` })),
+    [accounts]
+  );
+
   useEffect(() => {
     if (!isOpen) return;
 
     const loadData = async () => {
       setIsLoadingData(true);
       try {
-        const [categoriesData, installmentsData, debtsData] = await Promise.all([
+        const [categoriesData, installmentsData, debtsData, accountsData] = await Promise.all([
           fetchCategories(),
           fetchInstallments(),
           fetchDebts(),
+          fetchAccounts(),
         ]);
         setCategories(categoriesData);
         setInstallments(installmentsData);
         setDebts(debtsData);
+        setAccounts(accountsData);
       } catch (error) {
         console.error("Failed to load form data:", error);
         addToast("error", "Load failed", "Failed to load form data. Please try again.");
@@ -102,10 +148,11 @@ export function TransactionForm({
       type: TransactionType.CATEGORY_BASED,
       direction: TransactionDirection.EXPENSE,
       amount: "",
-      occurredAt: new Date().toISOString().split('T')[0],
+      occurredAt: formatDateToDDMMYYYY(new Date()),
       categoryId: "",
       installmentId: "",
       debtId: "",
+      accountId: "",
       note: "",
     });
     onClose();
@@ -120,7 +167,26 @@ export function TransactionForm({
     }
 
     if (!formData.occurredAt) {
-      addToast("error", "Invalid date", "Please select a date.");
+      addToast("error", "Invalid date", "Please enter a date.");
+      return;
+    }
+
+    // Validate date format DD.MM.YYYY
+    const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    if (!dateRegex.test(formData.occurredAt)) {
+      addToast("error", "Invalid date format", "Please enter date in DD.MM.YYYY format.");
+      return;
+    }
+
+    // Validate date values
+    try {
+      const isoDate = parseDDMMYYYYToISO(formData.occurredAt);
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date');
+      }
+    } catch (error) {
+      addToast("error", "Invalid date", "Please enter a valid date.");
       return;
     }
 
@@ -141,16 +207,42 @@ export function TransactionForm({
     }
 
     try {
-      await createTransaction({
+      // Convert DD.MM.YYYY to ISO string
+      const isoDate = parseDDMMYYYYToISO(formData.occurredAt);
+      
+      const transactionData: any = {
         type: formData.type,
         direction: formData.direction,
         amount: formData.amount,
-        occurredAt: new Date(formData.occurredAt).toISOString(),
-        categoryId: formData.categoryId || undefined,
-        installmentId: formData.installmentId || undefined,
-        debtId: formData.debtId || undefined,
-        note: formData.note || undefined,
-      });
+        occurredAt: isoDate,
+      };
+
+      // Only include categoryId if it's not empty
+      if (formData.categoryId && formData.categoryId.trim() !== "") {
+        transactionData.categoryId = formData.categoryId;
+      }
+
+      // Only include installmentId if it's not empty
+      if (formData.installmentId && formData.installmentId.trim() !== "") {
+        transactionData.installmentId = formData.installmentId;
+      }
+
+      // Only include debtId if it's not empty
+      if (formData.debtId && formData.debtId.trim() !== "") {
+        transactionData.debtId = formData.debtId;
+      }
+
+      // Only include accountId if it's not empty
+      if (formData.accountId && formData.accountId.trim() !== "") {
+        transactionData.accountId = formData.accountId;
+      }
+
+      // Only include note if it's not empty
+      if (formData.note && formData.note.trim() !== "") {
+        transactionData.note = formData.note;
+      }
+
+      await createTransaction(transactionData);
 
       addToast("success", "Transaction created", "Transaction created successfully.");
       await onSubmit();
@@ -355,12 +447,40 @@ export function TransactionForm({
 
             <div>
               <label className="block text-sm font-semibold text-primary-background/90 mb-2 tracking-wide">
-                Date
+                Account
+              </label>
+              <ListboxFloating
+                value={formData.accountId || ""}
+                onChange={(v) => setFormData((s) => ({ ...s, accountId: v as string }))}
+                options={accountOptions}
+                placement="bottom-start"
+                variant="glass"
+                renderButton={() => {
+                  const label = accountOptions.find((a) => a.value === formData.accountId)?.label || "Select account";
+                  return (
+                    <div className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-left text-black">
+                      {label}
+                    </div>
+                  );
+                }}
+                optionsClassName="border border-white/30 shadow-2xl ring-1 ring-white/15 text-black"
+                optionClassName="text-black hover:!bg-white/40"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-primary-background/90 mb-2 tracking-wide">
+                Date (DD.MM.YYYY)
               </label>
               <input
-                type="date"
+                type="text"
                 value={formData.occurredAt}
-                onChange={(e) => setFormData((s) => ({ ...s, occurredAt: e.target.value }))}
+                onChange={(e) => {
+                  const formatted = formatDateInput(e.target.value);
+                  setFormData((s) => ({ ...s, occurredAt: formatted }));
+                }}
+                placeholder="DD.MM.YYYY"
+                maxLength={10}
                 className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-primary-background placeholder-primary-background/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-200"
                 required
               />

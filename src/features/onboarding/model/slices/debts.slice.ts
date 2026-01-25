@@ -88,7 +88,12 @@ export const createDebtsSlice: StateCreator<
       if (!row) return s;
 
       const debtsErrors = { ...(s.errors.debts ?? {}) };
-      // Note: Current implementation doesn't add errors for debt rows
+      // Validate debt row
+      if (!row.totalDebt || Number(row.totalDebt) <= 0) {
+        debtsErrors[id] = "Enter a positive debt amount";
+      } else {
+        debtsErrors[id] = "";
+      }
       return { ...s, errors: { ...s.errors, debts: debtsErrors } };
     }),
 

@@ -1,28 +1,30 @@
 import { useAuth } from "@/app/providers/AuthProvider";
-import { ConfirmationModal } from "@/shared/ui";
-import { Button } from "@/shared/ui";
-import React, { useState } from "react";
+import React from "react";
+import { Button } from "@/shared/ui/Button";
 
 export const LogoutButton = () => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      console.log("Logout initiated");
+      await logout();
+    } catch (error) {
+      console.error("Logout failed in handleLogout:", error);
+      // Even if logout fails, try to redirect
+      window.location.replace("/login");
+    }
+  };
+
   return (
-    <>
-      {!openModal && (
-        <div className="grid">
-          <Button onClick={() => setOpenModal(true)} variant="glass">
-            Sign Out
-          </Button>
-        </div>
-      )}
-      {openModal && (
-        <ConfirmationModal
-          title="Are you sure you want to leave?"
-          action={logout}
-          cancel={() => setOpenModal(false)}
-        />
-      )}
-    </>
+    <Button
+      variant="glass"
+      size="md"
+      onClick={handleLogout}
+      className="w-full"
+    >
+      Sign Out
+    </Button>
   );
 };
 

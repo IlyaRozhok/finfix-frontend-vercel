@@ -200,8 +200,7 @@ export function IncomesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Incomes</h1>
-        <p className="mt-1">Track your income sources</p>
+        <h1 className="text-3xl font-light">Track your income sources</h1>
       </div>
 
       {/* Summary Cards */}
@@ -271,7 +270,7 @@ export function IncomesPage() {
                 <ChevronDownIcon className="h-5 w-5 text-primary-background/70 group-hover:text-primary-background" />
               )}
             </button>
-            <h2 className="text-xl font-semibold text-primary-background">
+            <h2 className="text-xl font-regular text-primary-background">
               Regular Incomes ({summaryStats.regularCount})
             </h2>
           </div>
@@ -387,7 +386,7 @@ export function IncomesPage() {
                 <ChevronDownIcon className="h-5 w-5 text-primary-background/70 group-hover:text-primary-background" />
               )}
             </button>
-            <h2 className="text-xl font-semibold text-primary-background">
+            <h2 className="text-xl font-regular text-primary-background">
               Event Incomes ({summaryStats.eventCount})
             </h2>
           </div>

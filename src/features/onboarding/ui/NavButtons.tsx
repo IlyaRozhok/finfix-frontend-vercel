@@ -41,10 +41,18 @@ export const OnboardingBackButton: React.FC<OnboardingNextButtonProps> = ({
   step,
 }) => {
   const navigate = useNavigate();
+  
+  // Don't show back button on welcome page
+  if (step === OnboardingStep.WELCOME) {
+    return null;
+  }
+
   return (
     <Button
       variant="ghost"
+      size="lg"
       onClick={() => navigate(getOnboardingPath({ step, type: "back" }))}
+      className="w-full sm:w-auto"
     >
       Back
     </Button>
@@ -89,9 +97,12 @@ export const OnboardingNextButton: React.FC<OnboardingNextButtonProps> = ({
     }
 
     if (step === OnboardingStep.BANK_DEBT) {
-      const ok = validateDebts();
-      if (!ok) return;
-      console.log("user", user);
+      // Only validate if there are debts to validate
+      if (data.debts.length > 0) {
+        const ok = validateDebts();
+        if (!ok) return;
+      }
+      
       if (hasDebtsChanged() && user?.id) {
         const newDebtsPayload = prepareNewDebtsForApi(
           data.debts,
@@ -119,6 +130,7 @@ export const OnboardingNextButton: React.FC<OnboardingNextButtonProps> = ({
     }
 
     if (step === OnboardingStep.INSTALLMENTS) {
+      // Only validate and save if there are installments
       if (data.installments && data.installments.length > 0) {
         const ok = validateInstallments();
         if (!ok) return;
@@ -130,28 +142,24 @@ export const OnboardingNextButton: React.FC<OnboardingNextButtonProps> = ({
         createInstallments(payload);
       }
 
-      // Complete onboarding and redirect to dashboard
-      completeOnboarding()
-        .then(() => {
-          // Refresh user data to update isOnboarded status
-          refresh().then(() => {
-            navigate("/dashboard", { replace: true });
-          });
-        })
-        .catch((error) => {
-          console.error("Failed to complete onboarding:", error);
-        });
-
+      // Navigate to completion page
+      navigate("/onboarding/complete", { replace: false });
       return;
     }
     navigate(getOnboardingPath({ step, type: "next" }));
   };
 
-  const buttonText = step === OnboardingStep.INSTALLMENTS ? "Complete" : "Next";
 
   return (
-    <Button variant="primary" onClick={handleNext}>
-      {buttonText}
-    </Button>
+    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+      <Button 
+        variant="glass-primary" 
+        size="lg"
+        onClick={handleNext}
+        className="w-full sm:w-auto flex-1"
+      >
+        Next
+      </Button>
+    </div>
   );
 };

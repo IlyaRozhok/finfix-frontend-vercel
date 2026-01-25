@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ExpenseForm } from "@/features/expenses/ui/ExpenseForm";
-import { Button, useToast } from "@/shared/ui";
+import { Button, useToast, StatusBadge } from "@/shared/ui";
 import { ConfirmationModal } from "@/shared/ui/ConfirmationModal";
 import { fetchCategories } from "@/features/onboarding/api";
 
@@ -155,8 +155,7 @@ export function ExpensesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Expenses</h1>
-          <p className="mt-1">Track your recurring expenses</p>
+          <h1 className="text-3xl font-light">Track your recurring expenses</h1>
         </div>
         <Button variant="glass-primary" onClick={handleAddExpense}>
           Add Expense
@@ -275,9 +274,7 @@ export function ExpensesPage() {
                       <div className="text-xs text-gray-500">per month</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                        Monthly
-                      </span>
+                      <StatusBadge variant="neutral">Monthly</StatusBadge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div>

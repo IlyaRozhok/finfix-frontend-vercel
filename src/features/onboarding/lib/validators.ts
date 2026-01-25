@@ -20,8 +20,11 @@ export const validateExpenses = (expenses: ReqUserExpense[]): Record<string, str
 
 export const validateDebts = (debts: Debt[]): Record<string, string> => {
   const errs: Record<string, string> = {};
-  // Current implementation doesn't add errors for debts, just clears them
-  // This maintains the existing behavior
+  debts.forEach((d) => {
+    if (!d.totalDebt || Number(d.totalDebt) <= 0) {
+      errs[d.id!] = "Enter a positive debt amount";
+    }
+  });
   return errs;
 };
 

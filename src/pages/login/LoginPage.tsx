@@ -1,30 +1,36 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import { GoogleLoginButton } from "@/features/auth/google-login/GoogleLoginButton";
 import { Navigate, useLocation } from "react-router-dom";
-import moneyAnimatedBg from "../../assets/money-bg-video.mp4";
-import moneyTree from "../../assets/dollars-login.png";
+import { useEffect } from "react";
+import finfixBg from "../../assets/bg.jpg";
 
 export function LoginPage() {
   const { user, loading } = useAuth();
   const loc = useLocation();
 
+  // Clear logout flag when user successfully interacts with login page
+  // This allows normal login flow after logout
+  useEffect(() => {
+    // Only clear flag after a short delay to ensure AuthProvider has finished initializing
+    const timer = setTimeout(() => {
+      sessionStorage.removeItem("finfix_logging_out");
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!loading && user) {
-    const next = (loc.state as any)?.next as string | undefined;
-    const target = next ?? (user.isOnboarded ? "/dashboard" : "/onboarding");
+    const next = (loc.state as { next?: string } | null)?.next;
+    const target = next ?? (user.isOnboarded ? "/profile" : "/onboarding");
     return <Navigate to={target} replace />;
   }
 
   return (
-    <div className="relativ flex justify-end overflow-hidden h-screen">
-      <video
-        autoPlay
-        muted
-        loop
+    <div className="relative flex justify-end overflow-hidden h-screen">
+      <img
+        src={finfixBg}
+        alt="Background"
         className="fixed top-0 left-0 w-full h-full object-cover z-0"
-      >
-        <source src={moneyAnimatedBg} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      />
 
       <div
         className="
@@ -34,13 +40,15 @@ export function LoginPage() {
         w-full 
         h-full
         p-10
-        bg-white/25 
-        backdrop-blur-[50px] -90 
+        bg-white/10 
+        backdrop-blur-xl
+        border-l border-white/30
+        shadow-2xl
         flex
         flex-col
         justify-start
         items-center
-        sm:w-[70%] 
+        sm:w-[70%]
         sm:justify-start
         sm:h-screen
         sm:rounded-none
@@ -48,18 +56,17 @@ export function LoginPage() {
         lg:w-[40%]
         "
       >
-        <div className="flex items-center pt-30 gap-5">
+        <div className="flex items-center pt-30 gap-2">
           <div className="">
-            <h1 className="text-8xl sm:text-7xl font-semibold md:text-7xl lg:text-8xl">
+            <h1 className="text-primary-blue text-[5rem] sm:text-[5rem] font-light tracking-wide md:text-[5rem] lg:text-[5rem] leading-none">
               FinFix
             </h1>
-            <p className="text-end text-base text-white/90 md:text-xl">
+            <p className="text-[2rem] sm:text-[1rem] md:text-[1rem] font-extralight lg:text-[1rem] xl:text-[2rem] text-primary-blue/90">
               Personal finance assistant
             </p>
           </div>
-          <img src={moneyTree} alt="logo" className="w-40 lg:w-40" />
         </div>
-        <div className="w-full flex justify-center items-start mt-5">
+        <div className="w-full flex justify-center items-start mt-4">
           <GoogleLoginButton />
         </div>
       </div>

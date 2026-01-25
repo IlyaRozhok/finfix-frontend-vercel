@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { DashboardSidebar } from "@/widgets/dashboard/DashboardSidebar";
 import { DashboardHeader } from "@/widgets/header/DashboardHeader";
-import bg from "@/assets/bank-card.avif";
+import bg from "@/assets/bg-test.avif";
 
 export default function DashboardLayout() {
   return (

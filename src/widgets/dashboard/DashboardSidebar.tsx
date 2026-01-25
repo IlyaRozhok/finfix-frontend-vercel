@@ -8,24 +8,23 @@ import {
   HomeIcon,
   ReceiptRefundIcon,
   BanknotesIcon,
-  CogIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  WalletIcon,
 } from "@heroicons/react/24/outline";
-import logo from "../../assets/money-tree.png";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Transactions", href: "/dashboard/transactions", icon: ChartBarIcon },
-  { name: "Incomes", href: "/dashboard/incomes", icon: BanknotesIcon },
-  { name: "Debts", href: "/dashboard/debts", icon: CreditCardIcon },
+  { name: "Dashboard", href: "/profile", icon: HomeIcon },
+  { name: "Transactions", href: "/profile/transactions", icon: ChartBarIcon },
+  { name: "Incomes", href: "/profile/incomes", icon: BanknotesIcon },
+  { name: "Debts", href: "/profile/debts", icon: CreditCardIcon },
   {
     name: "Installments",
-    href: "/dashboard/installments",
+    href: "/profile/installments",
     icon: ReceiptRefundIcon,
   },
-  { name: "Expenses", href: "/dashboard/expenses", icon: CurrencyDollarIcon },
-  { name: "Monobank", href: "/dashboard/monobank", icon: CogIcon },
+  { name: "Expenses", href: "/profile/expenses", icon: CurrencyDollarIcon },
+  { name: "Accounts", href: "/profile/accounts", icon: WalletIcon },
 ];
 
 export function DashboardSidebar() {
@@ -46,9 +45,9 @@ export function DashboardSidebar() {
         )}
       >
         {!isCollapsed && (
-          <h2 className="text-xl font-semibold text-primary-background flex items-center gap-1">
-            <img src={logo} alt="logo" className="w-10" />
-            <div>Finfix</div>
+          <h2 className="text-2xl font-light cursor-default text-primary-background flex items-center gap-1 tracking-wider">
+            {/* <img src={logo} alt="logo" className="w-10" /> */}
+            <div className="w-10">FinFix</div>
           </h2>
         )}
         <button
@@ -72,44 +71,10 @@ export function DashboardSidebar() {
         )}
       >
         {navigation.map((item) => {
-          const isDisabled = item.name === "Monobank";
-
-          // Special logic for Dashboard - only active on exact /dashboard match
+          // Special logic for Dashboard - only active on exact /profile match
           const isDashboardActive =
-            item.href === "/dashboard" && location.pathname === "/dashboard";
-          const shouldUseNavLinkActive = item.href !== "/dashboard";
-
-          if (isDisabled) {
-            return (
-              <div
-                key={item.name}
-                className={clsx(
-                  "group flex items-center text-sm font-medium rounded-xl transition-all duration-200 opacity-50 cursor-not-allowed",
-                  isCollapsed ? "px-2 py-3 justify-center" : "px-3 py-2"
-                )}
-                title={isCollapsed ? item.name : undefined}
-              >
-                <div
-                  className={clsx(
-                    "flex items-center justify-center",
-                    isCollapsed ? "" : "mr-3"
-                  )}
-                >
-                  <div className="p-1.5 rounded-lg">
-                    <item.icon
-                      className="h-4 w-4 flex-shrink-0 text-primary-background/50"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-                {!isCollapsed && (
-                  <span className="text-primary-background/50">
-                    {item.name}
-                  </span>
-                )}
-              </div>
-            );
-          }
+            item.href === "/profile" && location.pathname === "/profile";
+          const shouldUseNavLinkActive = item.href !== "/profile";
 
           return (
             <NavLink

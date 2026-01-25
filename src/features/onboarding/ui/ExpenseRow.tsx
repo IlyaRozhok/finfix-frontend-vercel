@@ -1,13 +1,12 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { ReqUserExpense as Row } from "@/features/onboarding/model/types";
-import { ConfirmationModal, Input } from "@/shared/ui";
+import { Input, useToast } from "@/shared/ui";
 import { useOnboarding } from "../model/store";
 import { ListboxFloating } from "@/shared/ui";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { renderBtn } from "../lib";
 import { deleteExpense } from "../api";
-import { useState } from "react";
 
 interface Props {
   row: Row;
@@ -18,8 +17,8 @@ interface Props {
 const numberRe = /^-?\d*(\.\d*)?$/;
 
 export function ExpenseRow(props: Props) {
-  const [showModal, setModal] = useState<boolean>(false);
   const { categories, row } = props;
+  const { addToast } = useToast();
 
   const {
     updateExpense,
@@ -46,18 +45,26 @@ export function ExpenseRow(props: Props) {
       originalExpense.amount !== row.amount ||
       originalExpense.description !== row.description);
 
-  const removeExpenseHandler = (id: string) => {
-    removeExpense(id);
-    deleteExpense(id);
-    setModal(false);
+  const handleRemoveExpense = async () => {
+    try {
+      const expenseExistsOnServer = originalData.expenses.some((exp) => exp.id === row.id);
+      if (expenseExistsOnServer) {
+        await deleteExpense(row.id);
+      }
+      removeExpense(row.id);
+      addToast("success", "Expense deleted", "Expense successfully deleted");
+    } catch (error) {
+      addToast("error", "Error", "Failed to delete expense");
+      console.error("Failed to delete expense:", error);
+    }
   };
 
   return (
     <>
       <div
         className={clsx(
-          "grid grid-cols-1 gap-2",
-          "md:grid-cols-[12rem_1fr_9rem_9rem_3rem] md:items-center my-5"
+          "grid grid-cols-1 gap-2 w-full",
+          "md:grid-cols-[12rem_1fr_9rem_3rem] md:items-center my-5"
         )}
       >
         {/* 1. Category */}
@@ -70,8 +77,9 @@ export function ExpenseRow(props: Props) {
               }
               options={categories}
               placement="bottom-start"
+              variant="glass"
               renderButton={() => renderBtn(categoryName)}
-              optionsClassName="!bg-black/95"
+              optionsClassName="bg-white/10 backdrop-blur-2xl border border-white/30"
             />
           )}
         </div>
@@ -93,7 +101,7 @@ export function ExpenseRow(props: Props) {
               "h-11 min-w-0",
               isModified &&
                 originalExpense?.description !== row.description &&
-                "ring-2 ring-blue-400/50"
+                "ring-2 ring-white/30 border border-white/40"
             )}
             containerClassName="h-11"
           />
@@ -120,7 +128,7 @@ export function ExpenseRow(props: Props) {
               "h-11 text-right",
               isModified &&
                 originalExpense?.amount !== row.amount &&
-                "ring-2 ring-blue-400/50"
+                "ring-2 ring-white/30 border border-white/40"
             )}
             containerClassName="h-11"
             error={rowError}
@@ -146,24 +154,14 @@ export function ExpenseRow(props: Props) {
         <div className="order-5 md:order-none flex justify-start">
           <button
             aria-label="Remove expense"
-            onClick={() => setModal(true)}
+            onClick={handleRemoveExpense}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 transition-colors"
             title="Delete expense"
           >
-            <TrashIcon className="h-5 w-5 text-slate-300" />
+            <TrashIcon className="h-5 w-5 text-primary-background/70" />
           </button>
         </div>
       </div>
-
-      {showModal && (
-        <div className="absolute left-0 top-0 h-full w-full bg-red-100">
-          <ConfirmationModal
-            action={() => removeExpenseHandler(row.id)}
-            title="Are you sure you want to delete this expense?"
-            cancel={() => setModal(false)}
-          />
-        </div>
-      )}
     </>
   );
 }

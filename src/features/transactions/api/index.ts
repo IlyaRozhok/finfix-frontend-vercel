@@ -33,8 +33,23 @@ export interface Transaction {
   amount: string;
   occurredAt: string;
   categoryId?: string;
+  category?: Category;
   installmentId?: string;
+  installment?: {
+    id: string;
+    description: string;
+  };
   debtId?: string;
+  debt?: {
+    id: string;
+    description: string;
+  };
+  accountId?: string;
+  account?: {
+    id: string;
+    name: string;
+    assetCode: string;
+  };
   note?: string;
   createdAt: string;
   updatedAt: string;
@@ -48,6 +63,7 @@ export interface CreateTransactionData {
   categoryId?: string;
   installmentId?: string;
   debtId?: string;
+  accountId?: string;
   note?: string;
 }
 
@@ -81,12 +97,25 @@ export const fetchDebts = async (): Promise<Debt[]> => {
   }
 };
 
-export const fetchTransactions = async (): Promise<Transaction[]> => {
+export const fetchTransactions = async (accountId?: string): Promise<Transaction[]> => {
   try {
-    const response = await api.get("api/transactions");
+    const params = accountId ? { accountId } : {};
+    const response = await api.get("api/transactions", { params });
     return response.data;
   } catch (err) {
     console.error("Failed to fetch transactions:", err);
+    throw err;
+  }
+};
+
+export const fetchMonthlyExpenses = async (accountId: string): Promise<Transaction[]> => {
+  try {
+    const response = await api.get("api/transactions/monthly-expenses", { 
+      params: { accountId } 
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch monthly expenses:", err);
     throw err;
   }
 };

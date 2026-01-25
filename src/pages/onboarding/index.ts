@@ -4,3 +4,4 @@ export { OnboardingIncomes } from "./OnboardingIncomes";
 export { OnboardingExpenses } from "./OnboardingExpenses";
 export { OnboardingDebts } from "./OnboardingDebts";
 export { OnboardingInstallments } from "./OnboardingInstallments";
+export { OnboardingComplete } from "./OnboardingComplete";

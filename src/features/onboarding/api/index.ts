@@ -50,7 +50,6 @@ export const createUserExpenses = async (payload: ReqCreateUserExpense[]) => {
 export const deleteExpense = async (id: string) => {
   try {
     const expense = await api.delete(`/api/expenses/${id}`);
-    alert("Expense sucessfully deleted");
     return expense.data;
   } catch (err) {
     console.error("Failed to update expenses:", err);
@@ -113,7 +112,6 @@ export const updateDebt = async (id: string, payload: ReqCreateDebt) => {
 export const deleteDebt = async (id: string) => {
   try {
     const debt = await api.delete(`/api/debts/${id}`);
-    alert("Debt sucessfully deleted");
     return debt.data;
   } catch (err) {
     console.error("Failed to update debt:", err);

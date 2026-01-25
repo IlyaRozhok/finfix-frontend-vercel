@@ -22,11 +22,15 @@ export const Incomes = () => {
   }, [incomes]);
 
   return (
-    <Input
-      value={data.incomes}
-      onChange={(e) => changeIncomes(e)}
-      type="number"
-      error={errors.incomes}
-    />
+    <div className="w-full max-w-md mx-auto mt-2">
+      <Input
+        value={data.incomes}
+        onChange={(e) => changeIncomes(e)}
+        type="number"
+        error={errors.incomes}
+        containerClassName="h-12"
+        className="h-12"
+      />
+    </div>
   );
 };

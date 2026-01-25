@@ -24,14 +24,22 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 border border-blue-600/50 shadow-lg",
-  secondary: "bg-gray-600 text-white hover:bg-gray-700 border border-gray-600/50 shadow-lg",
-  success: "bg-green-600 text-white hover:bg-green-700 border border-green-600/50 shadow-lg",
-  danger: "bg-red-600 text-white hover:bg-red-700 border border-red-600/50 shadow-lg",
-  ghost: "bg-transparent text-primary-background hover:bg-white/10 border border-transparent hover:border-white/20",
-  glass: "bg-white/10 backdrop-blur-md text-primary-background hover:bg-white/20 border border-white/20 shadow-lg",
-  "glass-primary": "bg-white/20 backdrop-blur-md text-primary-background hover:bg-white/30 border border-white/30 shadow-lg",
-  "glass-secondary": "bg-white/15 backdrop-blur-md text-primary-background hover:bg-white/25 border border-white/25 shadow-lg",
+  primary:
+    "bg-blue-600 text-white hover:bg-blue-700 border border-blue-600/50 shadow-lg",
+  secondary:
+    "bg-gray-600 text-white hover:bg-gray-700 border border-gray-600/50 shadow-lg",
+  success:
+    "bg-green-600 text-white hover:bg-green-700 border border-green-600/50 shadow-lg",
+  danger:
+    "bg-red-900 text-white hover:bg-red-800 border border-red-600/50 shadow-lg",
+  ghost:
+    "bg-transparent text-primary-background hover:bg-white/10 border border-transparent hover:border-white/20",
+  glass:
+    "bg-white/10 backdrop-blur-md text-primary-background hover:bg-white/20 border border-white/20",
+  "glass-primary":
+    "bg-white/20 backdrop-blur-md text-primary-background hover:bg-white/30 border border-white/30",
+  "glass-secondary":
+    "bg-white/15 backdrop-blur-md text-primary-background hover:bg-white/25 border border-white/25",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -52,16 +60,23 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
     isLoading = false,
     children,
     disabled,
+    onClick,
     ...p
   },
   ref
 ) {
   const baseClasses =
-    "font-medium transition-all duration-200 cursor-pointer inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed";
+    "font-medium transition-all duration-200 cursor-pointer inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border focus:border-white/40 focus:shadow-[0_0_8px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed";
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Call onClick from props if provided (this is the primary way)
+    if (onClick) {
+      onClick(e);
+    }
+    // Also call handler if provided (for backward compatibility)
     if (handler && param !== undefined) {
-      return handler(param);
+      handler(param);
+      return;
     }
     if (handler) {
       handler();

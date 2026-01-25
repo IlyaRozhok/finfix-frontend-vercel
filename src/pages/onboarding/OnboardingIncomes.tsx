@@ -4,13 +4,13 @@ import { OnboardingFrame } from "@/widgets/onboarding";
 
 export const OnboardingIncomes = () => {
   const widgetData = {
-    title: "Monthly income",
-    body: `Please, indicate your monthly income`,
+    title: "Monthly Income",
+    body: "Please indicate your monthly income",
     step: OnboardingStep.INCOMES,
   };
 
   return (
-    <div className="flex justify-center item-center">
+    <div className="flex justify-center items-center min-h-screen">
       <OnboardingFrame {...widgetData}>
         <Incomes />
       </OnboardingFrame>

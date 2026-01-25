@@ -7,15 +7,21 @@ type ConfirmationModalProps = {
   title: string;
   action: () => void;
   cancel: () => void;
+  isOpen?: boolean;
 };
 
 export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   action,
   cancel,
+  isOpen = true,
 }) => {
   return (
-    <Dialog open={true} onClose={cancel} className="relative z-50">
+    <Dialog 
+      open={isOpen} 
+      onClose={cancel} 
+      className="relative z-50"
+    >
       {/* Enhanced backdrop with better blur */}
       <div className="fixed inset-0 bg-black/30 backdrop-blur-xl" />
 

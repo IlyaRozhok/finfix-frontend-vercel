@@ -30,7 +30,7 @@ export function RequireOnboarded({
   if (!user) return null;
   const ok = invert ? !user.isOnboarded : user.isOnboarded;
   if (!ok)
-    return <Navigate to={invert ? "/dashboard" : "/onboarding"} replace />;
+    return <Navigate to={invert ? "/profile" : "/onboarding"} replace />;
   return <>{children}</>;
 }
 
@@ -40,7 +40,7 @@ export function RequireGuest({ children }: { children: React.ReactNode }) {
   if (loading) return <Loader />;
   if (user) {
     const next = loc.state?.next as string | undefined;
-    const target = next ?? (user.isOnboarded ? "/dashboard" : "/onboarding");
+    const target = next ?? (user.isOnboarded ? "/profile" : "/onboarding");
     return <Navigate to={target} replace />;
   }
   return <>{children}</>;

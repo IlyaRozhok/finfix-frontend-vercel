@@ -1,20 +1,20 @@
 import { OnboardingStep } from "@/features/onboarding";
 import { CurrencyListbox } from "@/features/onboarding/";
-
 import { OnboardingFrame } from "@/widgets/onboarding";
 
 export const OnboardingCurrency = () => {
   const widgetData = {
-    title: OnboardingStep.CURRENCY,
-    body: `Select prefered currency for using in app`,
+    title: "Base Currency",
+    body: "Select your preferred currency for using in the app",
     step: OnboardingStep.CURRENCY,
   };
 
-
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center min-h-screen">
       <OnboardingFrame {...widgetData}>
-        <CurrencyListbox />
+        <div className="flex justify-center">
+          <CurrencyListbox />
+        </div>
       </OnboardingFrame>
     </div>
   );

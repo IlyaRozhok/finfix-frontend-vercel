@@ -8,9 +8,10 @@ export function GoogleLoginButton() {
   )}`;
   return (
     <Button variant="glass" onClick={() => (window.location.href = url)}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center w-83 gap-2">
         <img className="w-5" src={googleIcon} alt="google-icon" />
-        Continue with Google
+
+        <p className="text-primary-blue">Continue with Google</p>
       </div>
     </Button>
   );
