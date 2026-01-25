@@ -73,7 +73,7 @@ export const AccountCard = ({
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="text-lg font-semibold text-primary-background">
-                {account.type.toUpperCase()}
+                {account.type?.toUpperCase() || "ACCOUNT"}
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@ export const AccountCard = ({
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm text-gray-400 uppercase tracking-wide">
-                  {account.type}
+                  {account.type || "Account"}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">{currencyName}</div>
               </div>
