@@ -1,12 +1,13 @@
 import { useAuth } from "@/app/providers/AuthProvider";
 import { GoogleLoginButton } from "@/features/auth/google-login/GoogleLoginButton";
 import { Navigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import finfixBg from "../../assets/bg.jpg";
 
 export function LoginPage() {
   const { user, loading } = useAuth();
   const loc = useLocation();
+  const [isVisible, setIsVisible] = useState(false);
 
   // Clear logout flag when user successfully interacts with login page
   // This allows normal login flow after logout
@@ -17,6 +18,17 @@ export function LoginPage() {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Fade-in animation when page loads
+  useEffect(() => {
+    if (!loading) {
+      // Small delay for smooth fade-in
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   if (!loading && user) {
     const next = (loc.state as { next?: string } | null)?.next;
@@ -33,7 +45,7 @@ export function LoginPage() {
       />
 
       <div
-        className="
+        className={`
         text-white 
         relative 
         z-10 
@@ -54,7 +66,9 @@ export function LoginPage() {
         sm:rounded-none
         md:w-[50%]
         lg:w-[40%]
-        "
+        transition-opacity duration-300
+        ${isVisible ? 'opacity-100' : 'opacity-0'}
+        `}
       >
         <div className="flex items-center pt-30 gap-2">
           <div className="">

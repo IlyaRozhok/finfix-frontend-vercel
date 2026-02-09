@@ -37,7 +37,7 @@ export const OnboardingUserMenu = () => {
           <p className="text-xs font-medium text-black grid place-items-center mb-5">
             Hello, {user?.userName}
           </p>
-          <LogoutButton />
+          <LogoutButton onLogoutStart={() => setIsOpen(false)} />
         </div>
       )}
     </>

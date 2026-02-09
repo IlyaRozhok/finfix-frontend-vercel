@@ -34,8 +34,10 @@ function clearCookies() {
 const LOGOUT_FLAG = "finfix_logging_out";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Check logout flag immediately on mount to avoid loading state
+  const isLoggingOut = typeof window !== "undefined" && sessionStorage.getItem(LOGOUT_FLAG);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isLoggingOut);
 
   const refresh = useCallback(async () => {
     // Don't refresh if we're in the middle of logging out
@@ -63,9 +65,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // This flag will be cleared on /login page
     sessionStorage.setItem(LOGOUT_FLAG, "true");
     
-    // Clear user state immediately
+    // Clear user state and set loading to false immediately
+    // This prevents loader from showing during redirect
     setUser(null);
-    console.log("User state cleared");
+    setLoading(false);
+    console.log("User state cleared, loading set to false");
     
     // Try to clear cookies on frontend (may not work for httpOnly cookies)
     clearCookies();
@@ -80,10 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Even if API fails, we'll redirect and the flag will prevent auto-login
     }
     
-    // Use replace instead of href to avoid adding to history
-    // The flag in sessionStorage will prevent refresh() from running on /login
-    console.log("Redirecting to /login");
-    window.location.replace("/login");
+    // Don't redirect here - let the component handle navigation via React Router
+    // This prevents page reload and loader flickering
   }, []);
 
   useEffect(() => {
@@ -93,6 +95,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     if (isOnLoginPage && isLoggingOut) {
       console.log("On login page after logout, skipping initial refresh");
+      setLoading(false);
+      setUser(null);
+      return;
+    }
+    
+    // If we're logging out, don't refresh
+    if (isLoggingOut) {
       setLoading(false);
       setUser(null);
       return;

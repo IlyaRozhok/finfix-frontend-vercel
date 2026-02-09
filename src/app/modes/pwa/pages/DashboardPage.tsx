@@ -253,56 +253,6 @@ export function PWADashboardPage() {
     );
   }
 
-  if (accounts.length === 0 && !loading) {
-    return (
-      <div className="space-y-8">
-        <div className="flex items-center space-x-2 mb-6">
-          <button
-            onClick={() => navigate("/analytics")}
-            className={clsx(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-              isActive("/analytics")
-                ? "bg-white/20 text-primary-background"
-                : "text-primary-background/70 hover:bg-white/10"
-            )}
-          >
-            Dashboard
-          </button>
-        </div>
-        <Card className="p-8 sm:p-12">
-          <div className="text-center max-w-md mx-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-primary-background mb-3">
-              No accounts yet
-            </h2>
-            <p className="text-sm sm:text-base text-primary-background/70 mb-6">
-              To start tracking your transactions, you need to create an account first.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {!monobankIntegration && (
-                <Button
-                  variant="glass-primary"
-                  size="lg"
-                  onClick={() => setIsModalOpen(true)}
-                  className="px-6"
-                >
-                  Sync Monobank
-                </Button>
-              )}
-              <Button
-                variant="glass-primary"
-                size="lg"
-                onClick={() => setShowForm(true)}
-                className="px-6"
-              >
-                Add Account
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       <div className="flex items-center space-x-2 mb-6">
@@ -346,37 +296,37 @@ export function PWADashboardPage() {
         </div>
       </div>
 
-      {(chartData.length > 0 || dailyChartData.length > 0) && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-primary-background">
-              Spending
-            </h2>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setChartPeriod("1month")}
-                className={clsx(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                  chartPeriod === "1month"
-                    ? "bg-white/20 text-primary-background"
-                    : "text-primary-background/70 hover:bg-white/10"
-                )}
-              >
-                1 Month
-              </button>
-              <button
-                onClick={() => setChartPeriod("3month")}
-                className={clsx(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                  chartPeriod === "3month"
-                    ? "bg-white/20 text-primary-background"
-                    : "text-primary-background/70 hover:bg-white/10"
-                )}
-              >
-                3 Months
-              </button>
-            </div>
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-primary-background">
+            Spending Analytics
+          </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setChartPeriod("1month")}
+              className={clsx(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                chartPeriod === "1month"
+                  ? "bg-white/20 text-primary-background"
+                  : "text-primary-background/70 hover:bg-white/10"
+              )}
+            >
+              1 Month
+            </button>
+            <button
+              onClick={() => setChartPeriod("3month")}
+              className={clsx(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                chartPeriod === "3month"
+                  ? "bg-white/20 text-primary-background"
+                  : "text-primary-background/70 hover:bg-white/10"
+              )}
+            >
+              3 Months
+            </button>
           </div>
+        </div>
+        {(chartData.length > 0 || dailyChartData.length > 0) ? (
           <ResponsiveContainer width="100%" height={250}>
             <LineChart
               data={chartPeriod === "1month" ? dailyChartData : chartData}
@@ -418,8 +368,38 @@ export function PWADashboardPage() {
               />
             </LineChart>
           </ResponsiveContainer>
-        </Card>
-      )}
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-primary-background/60 mb-4">
+              {accounts.length === 0
+                ? "Create an account and start making transactions to see your spending analytics here."
+                : "Start making transactions to see your spending analytics here."}
+            </p>
+            {accounts.length === 0 && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+                {!monobankIntegration && (
+                  <Button
+                    variant="glass-primary"
+                    size="md"
+                    onClick={() => setIsModalOpen(true)}
+                    className="px-6"
+                  >
+                    Sync Monobank
+                  </Button>
+                )}
+                <Button
+                  variant="glass-primary"
+                  size="md"
+                  onClick={() => setShowForm(true)}
+                  className="px-6"
+                >
+                  Add Account
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+      </Card>
 
       {/* Monobank Sync Modal */}
       <MonobankSyncModal 

@@ -37,7 +37,13 @@ export function RequireOnboarded({
 export function RequireGuest({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const loc = useLocation();
-  if (loading) return <Loader />;
+  
+  // Check if we're logging out - don't show loader in this case
+  const isLoggingOut = typeof window !== "undefined" && sessionStorage.getItem("finfix_logging_out");
+  
+  // If we're logging out, skip loading state to prevent white screen flash
+  if (loading && !isLoggingOut) return <Loader />;
+  
   if (user) {
     const next = loc.state?.next as string | undefined;
     const target = next ?? (user.isOnboarded ? "/profile" : "/onboarding");

@@ -148,7 +148,7 @@ export function UserDropdownMenu({ theme }: UserDropdownMenuProps) {
 
           <div className={clsx("pt-4", dividerClasses)}>
             <div className="w-full">
-              <LogoutButton />
+              <LogoutButton onLogoutStart={() => setIsMenuOpen(false)} />
             </div>
           </div>
         </div>

@@ -84,7 +84,7 @@ export function UserDropdownMenu() {
           </div>
 
           <div className="pt-4 border-t border-white/20">
-            <LogoutButton />
+            <LogoutButton onLogoutStart={() => setIsMenuOpen(false)} />
           </div>
         </div>
         </>

@@ -38,7 +38,7 @@ export function Header({
   const headerClasses = clsx(
     "h-16 flex items-center justify-between relative z-50 border-b",
     isAdminTheme
-      ? "px-6 bg-white/10 backdrop-blur-xl border-white/30 shadow-lg"
+      ? "px-6 bg-white/10 backdrop-blur-xl border-white/30"
       : "px-6 bg-white/80 backdrop-blur-md border-white/20"
   );
 

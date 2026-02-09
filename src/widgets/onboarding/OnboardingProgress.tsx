@@ -49,14 +49,15 @@ export const OnboardingProgress: React.FC<OnboardingProgressProps> = ({
                   isCompleted &&
                     "text-white",
                   isCurrent &&
-                    "bg-white/20 backdrop-blur-sm border-2 text-white ring-2 ring-white/20",
+                    "bg-white/20 backdrop-blur-sm border-2 text-white ring-2",
                   isUpcoming && "bg-white/5 text-slate-400 border border-white/10"
                 )}
                 style={isCompleted ? {
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
                   boxShadow: '0 0 12px rgba(255, 255, 255, 0.4), 0 0 24px rgba(255, 255, 255, 0.2)'
                 } : isCurrent ? {
-                  borderColor: 'rgba(255, 255, 255, 0.5)'
+                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                  ringColor: 'rgba(255, 255, 255, 0.2)'
                 } : {}}
               >
                 {isCompleted ? (
